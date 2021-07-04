@@ -1,0 +1,16 @@
+-
+  name: DeployContainer
+  hosts: all
+  user: ansadmin
+  tasks:
+    - name: Kill all running containers
+      shell: docker kill $(docker ps -q)
+      ignore_errors: yes
+    - name: Delete all stopped containers
+      shell: docker rm $(docker ps -a -q)
+      ignore_errors: yes
+    - name: Remove existing image if exists
+      shell: docker rmi vrankasurender/devops-image:"{{ build }}"
+      ignore_errors: yes
+    - name: Run container with build reference
+      shell: docker run -d --name devops-container -p 8080:8080 vrankasurender/devops-image:"{{ build }}"
